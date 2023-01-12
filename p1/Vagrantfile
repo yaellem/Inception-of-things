@@ -1,0 +1,26 @@
+Vagrant.configure("2") do |config|
+	config.vm.box = "ubuntu/bionic64"
+	config.vagrant.plugins = {"vagrant-vbguest" => {"version" => "0.21.0"}} 
+	config.vbguest.auto_update = false
+	config.vm.synced_folder ".", "/vagrant"
+
+	NODES = [
+		{:hostname => "ymarcillS", :ip => "192.168.42.110", :cpus => 1, :mem => 1024, :script => "scripts/s.sh"},
+		{:hostname => "ymarcillSW", :ip => "192.168.42.111", :cpus => 1, :mem => 512, :script => "scripts/sw.sh"}
+	]
+	NODES.each do |node|
+		config.vm.define node[:hostname] do |machine|
+			machine.vm.hostname = node[:hostname]
+			machine.vm.boot_timeout = 1000
+			machine.vm.network "private_network", ip: node[:ip]
+			machine.vm.provider "virtualbox" do |virtual|
+				virtual.memory = node[:mem]
+				virtual.cpus = node[:cpus]
+				virtual.linked_clone = true
+				virtual.customize ["modifyvm", :id, "--name", node[:hostname]]
+			end
+			machine.vm.provision "Scripts:", type: "shell", path: node[:script]
+		end
+	end
+end
+

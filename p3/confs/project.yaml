@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: development
+  labels:
+    app: playground-inception
+spec:
+  description: Our ArgoCD Project to deploy our app locally
+  sourceRepos:
+    - "https://github.com/msabwat/*"
+  destinations:
+    - namespace: dev
+      server: https://kubernetes.default.svc
+  orphanedResources:
+    warn: false
+

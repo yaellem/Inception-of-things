@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: playground-inception-app
+spec:
+  project: development
+  source:
+    repoURL: https://github.com/msabwat/playground-inception.git
+    targetRevision: HEAD
+    path: .
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dev
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+
